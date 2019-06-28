@@ -15,3 +15,7 @@ Plotted the analysis using Matplotlib.
 <img width="581" alt="Screen Shot 2019-06-28 at 4 07 55 PM" src="https://user-images.githubusercontent.com/49076702/60375659-24feea80-99bf-11e9-8662-84a8ddcfcce8.png">
 
 # Station Analysis
+
+<img width="476" alt="Screen Shot 2019-06-28 at 4 11 14 PM" src="https://user-images.githubusercontent.com/49076702/60375716-698a8600-99bf-11e9-855b-31041221e3ea.png">
+
+# Temperature Analysis
