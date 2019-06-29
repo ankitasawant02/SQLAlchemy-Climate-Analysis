@@ -99,8 +99,8 @@ def stations():
 def tobs():
 
     year_ago = dt.date(2017,8,23) - dt.timedelta(days= 365)
-    year_temp = session.query(Measurement.tobs).\
-    filter(Measurement.date >= year_ago, Measurement.station == 'USC00519281').order_by(Measurement.tobs).all()
+    year_temp = session.query(Measurement.tobs).filter(Measurement.date >= year_ago, Measurement.station == 'USC00519281').\
+    order_by(Measurement.tobs).all()
 
     yr_temp = []
     for y_t in year_temp:
@@ -109,6 +109,58 @@ def tobs():
         yr_temp.append(yrtemp)
 
     return jsonify(yr_temp)
+
+
+def calc_start_temps(start_date):
+    """TMIN, TAVG, and TMAX for a list of dates.
+    
+    Args:
+        start_date (string): A date string in the format %Y-%m-%d
+        end_date (string): A date string in the format %Y-%m-%d
+        
+    Returns:
+        TMIN, TAVE, and TMAX
+    """
+    
+    return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+    filter(Measurement.date >= start_date).all() 
+
+@app.route("/api/v1.0/<start>")
+def start_date(start):
+    
+    calc_start_temp = calc_start_temps(start)
+    t_temp= list(np.ravel(calc_start_temp))
+
+    tmin = t_temp[0]
+    tmax = t_temp[2]
+    tavg = t_temp[1]
+    tdict = {'Minimum temperature': tmin, 'Maximum temperature': tmax, 'Avg temperature': tavg}
+
+    return jsonify(tdict)
+
+def calc_start_end_temps(start_date, end_date):
+    """TMIN, TAVG, and TMAX for a list of dates.
+    Args:
+    start_date (string): A date string in the format %Y-%m-%d
+    end_date (string): A date string in the format %Y-%m-%d
+    Returns:
+    TMIN, TAVE, and TMAX
+    """
+    return session.query(func.min(Measurement.tobs),func.avg(Measurement.tobs),func.max(Measurement.tobs)).\
+    filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+
+@app.route("/api/v1.0/<start>/<end>")
+def start_end_date(start, end):
+    
+    calc_start_end_temp = calc_start_end_temps(start, end)
+    t_temp1= list(np.ravel(calc_start_end_temp))
+
+    temp_min = t_temp1[0]
+    temp_max = t_temp1[2]
+    temp_avg = t_temp1[1]
+    temp_dict = { 'Minimum temperature': temp_min, 'Maximum temperature': temp_max, 'Avg temperature': temp_avg}
+
+    return jsonify(temp_dict)
 
 
 
